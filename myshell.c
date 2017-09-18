@@ -3,10 +3,26 @@
 #include <string.h>
 #include <time.h>
 
+char **split_line(char *buf)
+{
+    int i = 0;
+    char **args = malloc(64 * sizeof(char *));
+    char *tok = strtok(buf, " ");
+
+    while (tok != NULL)
+    {
+        args[i++] = tok;
+        tok = strtok(NULL, " ");
+    }
+
+    return args;
+}
+
 
 int main()
 {
     char line[1024];
+    char **args;
     
     while (1)
     {
@@ -19,6 +35,15 @@ int main()
 
         fgets(line, sizeof(line), stdin);
 
+        char **args = split_line(line);
+
+        int i;
+        for (i = 0; i < 2; i++)
+        {
+            printf("%s\n", args[i]);
+        }
+    
+        
         break;
     }
 }
