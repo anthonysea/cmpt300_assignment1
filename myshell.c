@@ -15,7 +15,7 @@ char **split_line(char *buf)
     {
         args[i] = tok;     
         tok = strtok(NULL, " ");
-        printf("args[%i]: %s\n", i, args[i]);
+        printf("args[%i]: %s\n", i, args[i]); // Debugging output
         i++;
     }
     args[i] = NULL;
@@ -27,6 +27,10 @@ void execute_line(char **args)
 {
     int status;
     pid_t pid;
+
+    if (strcmp(args[0], "exit") == 0) 
+        exit(1);
+        
     pid = fork();
     if (pid == 0) 
     {
