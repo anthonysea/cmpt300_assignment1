@@ -30,7 +30,7 @@ void execute_line(char **args)
 
     if (strcmp(args[0], "exit") == 0) 
         exit(1);
-        
+
     pid = fork();
     if (pid == 0) 
     {
@@ -67,23 +67,18 @@ int main()
         strftime(date_and_time, sizeof(date_and_time), "%x - %I:%M%p", tm);
         printf("%s# ", date_and_time);
 
+        // Get input from user
         fgets(line, sizeof(line), stdin);
 
-        // Remove trailing '\n' from the usage of fgets()
+        // Remove trailing '\n' from input
         char *pos;
         if ((pos = strchr(line, '\n')) != NULL)
             *pos = '\0';
         
-
+        // Tokenize the input
         char **args = split_line(line);
 
-        /*
-        int i;
-        for (i = 0; i < 2; i++)
-        {
-            printf("%s\n", args[i]);
-        }
-        */
+        // Execute command with arguments
         execute_line(args);
         
     }
