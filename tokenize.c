@@ -24,7 +24,7 @@ int main()
         }
 
         // Iterates through "array[]" an ddisplays each token on screen
-        for (i = 0; i < 3; ++i)
+        for (i = 0; i < sizeof(array); ++i)
         {
             printf("%s\n", array[i]);
         }

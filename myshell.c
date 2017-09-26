@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 char **split_line(char *buf)
 {
@@ -11,11 +13,39 @@ char **split_line(char *buf)
 
     while (tok != NULL)
     {
-        args[i++] = tok;
+        args[i] = tok;     
         tok = strtok(NULL, " ");
+        printf("args[%i]: %s\n", i, args[i]);
+        i++;
     }
+    args[i] = NULL;
 
     return args;
+}
+
+void execute_line(char **args) 
+{
+    int status;
+    pid_t pid;
+    pid = fork();
+    if (pid == 0) 
+    {
+        if (execvp(*args, args) < 0) 
+        {
+            
+            perror("sh");
+        }     
+    } 
+    else if (pid < 0) 
+    {
+        printf("Forking error");
+    } 
+    else 
+    {
+        // Parent process
+        waitpid(pid, &status, WUNTRACED);
+    }
+        
 }
 
 
@@ -35,15 +65,22 @@ int main()
 
         fgets(line, sizeof(line), stdin);
 
+        // Remove trailing '\n' from the usage of fgets()
+        char *pos;
+        if ((pos = strchr(line, '\n')) != NULL)
+            *pos = '\0';
+        
+
         char **args = split_line(line);
 
+        /*
         int i;
         for (i = 0; i < 2; i++)
         {
             printf("%s\n", args[i]);
         }
-    
+        */
+        execute_line(args);
         
-        break;
     }
 }
