@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+// Split string into array of char pointers
 char **split_line(char *buf)
 {
     int i = 0;
@@ -15,7 +16,7 @@ char **split_line(char *buf)
     {
         args[i] = tok;     
         tok = strtok(NULL, " ");
-        printf("args[%i]: %s\n", i, args[i]); // Debugging output
+        // printf("args[%i]: %s\n", i, args[i]); // Debugging output
         i++;
     }
     args[i] = NULL;
@@ -23,32 +24,46 @@ char **split_line(char *buf)
     return args;
 }
 
+// Execute command 
 void execute_line(char **args) 
 {
     int status;
     pid_t pid;
 
+    // exit builtin command
     if (strcmp(args[0], "exit") == 0) 
+    {
         exit(1);
-
-    pid = fork();
-    if (pid == 0) 
+    }
+    // cd builtin command
+    else if (strcmp(args[0], "cd") == 0)
     {
-        if (execvp(*args, args) < 0) 
-        {
-            
+        if (chdir(args[1]) < 0) {
             perror("sh");
-        }     
-    } 
-    else if (pid < 0) 
-    {
-        printf("Forking error");
+        }
     } 
     else 
     {
-        // Parent process
-        waitpid(pid, &status, WUNTRACED);
+        pid = fork();
+        if (pid == 0) 
+        {
+            if (execvp(*args, args) < 0) 
+            {     
+                perror("sh");
+            }     
+        } 
+        else if (pid < 0) 
+        {
+            printf("Forking error");
+        } 
+        else 
+        {
+            // Parent process
+            waitpid(pid, &status, WUNTRACED);
+        }
     }
+
+    
         
 }
 
