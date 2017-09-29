@@ -45,14 +45,14 @@ void execute_line(char **args)
     else 
     {
         pid = fork();
-        if (pid == 0) 
+        if (pid == 0) // Child process
         {
             if (execvp(*args, args) < 0) 
             {     
                 perror("sh");
             }     
         } 
-        else if (pid < 0) 
+        else if (pid < 0) // Error forking
         {
             printf("Forking error");
         } 
